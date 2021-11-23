@@ -57,9 +57,7 @@ class _CallPageState extends State<CallPage> {
 
     await _initAgoraRtcEngine();
     _addAgoraEventHandlers();
-    VideoEncoderConfiguration configuration = VideoEncoderConfiguration();
-    configuration.dimensions = VideoDimensions(width: 1920, height: 1080);
-    await _engine.setVideoEncoderConfiguration(configuration);
+
     await _engine.joinChannel(Token, widget.channelName!, null, 0);
   }
 
@@ -78,34 +76,22 @@ class _CallPageState extends State<CallPage> {
         final info = 'onError: $code';
         _infoStrings.add(info);
       });
-    }, joinChannelSuccess: (channel, uid, elapsed) {
-      setState(() {
-        final info = 'onJoinChannel: $channel, uid: $uid';
-        _infoStrings.add(info);
-      });
     }, leaveChannel: (stats) {
       setState(() {
-        _infoStrings.add('onLeaveChannel');
+        
         _users.clear();
       });
     }, userJoined: (uid, elapsed) {
       setState(() {
-        final info = 'userJoined: $uid';
-        _infoStrings.add(info);
+        
         _users.add(uid);
       });
     }, userOffline: (uid, elapsed) {
       setState(() {
-        final info = 'userOffline: $uid';
-        _infoStrings.add(info);
+        
         _users.remove(uid);
       });
-    }, firstRemoteVideoFrame: (uid, width, height, elapsed) {
-      setState(() {
-        final info = 'firstRemoteVideo: $uid ${width}x $height';
-        _infoStrings.add(info);
-      });
-    }));
+    }, ));
   }
 
   /// Helper function to get list of native views
@@ -120,13 +106,13 @@ class _CallPageState extends State<CallPage> {
 
   /// Video view wrapper
   Widget _videoView(view) {
-    return Expanded(child: Container(
-            child: Column(
-          children: <Widget>[Image.network(
-          'https://cdn.pixabay.com/photo/2015/03/26/09/41/phone-690091_960_720.jpg',
-            
-          )]
-        )));
+    return Expanded(
+        child: Container(
+            child: Column(children: <Widget>[
+      Image.network(
+        'https://cdn.pixabay.com/photo/2015/03/26/09/41/phone-690091_960_720.jpg',
+      )
+    ])));
   }
 
   /// Video view row wrapper
@@ -145,10 +131,9 @@ class _CallPageState extends State<CallPage> {
     switch (views.length) {
       case 1:
         return Container(
-            child: Column(
-          children: <Widget>[  
-            _expandedVideoRow([views[0]]),]
-        ));
+            child: Column(children: <Widget>[
+          _expandedVideoRow([views[0]]),
+        ]));
       case 2:
         return Container(
             child: Column(
@@ -180,28 +165,28 @@ class _CallPageState extends State<CallPage> {
 
   /// Toolbar layout
   Widget _toolbar() {
-    if (widget.role == ClientRole.Audience) return Container(
-      alignment: Alignment.bottomCenter,
-      padding: const EdgeInsets.symmetric(vertical: 48),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-         
-          RawMaterialButton(
-            onPressed: () => _onCallEnd(context),
-            child: Icon(
-              Icons.call_end,
-              color: Colors.white,
-              size: 35.0,
+    if (widget.role == ClientRole.Audience)
+      return Container(
+        alignment: Alignment.bottomCenter,
+        padding: const EdgeInsets.symmetric(vertical: 48),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            RawMaterialButton(
+              onPressed: () => _onCallEnd(context),
+              child: Icon(
+                Icons.call_end,
+                color: Colors.white,
+                size: 35.0,
+              ),
+              shape: CircleBorder(),
+              elevation: 2.0,
+              fillColor: Colors.redAccent,
+              padding: const EdgeInsets.all(15.0),
             ),
-            shape: CircleBorder(),
-            elevation: 2.0,
-            fillColor: Colors.redAccent,
-            padding: const EdgeInsets.all(15.0),
-          ),
-          
-        ],
-      ),);
+          ],
+        ),
+      );
     return Container(
       alignment: Alignment.bottomCenter,
       padding: const EdgeInsets.symmetric(vertical: 48),
@@ -239,7 +224,6 @@ class _CallPageState extends State<CallPage> {
 
   /// Info panel to show logs
  
-
   void _onCallEnd(BuildContext context) {
     Navigator.pop(context);
   }
@@ -250,8 +234,6 @@ class _CallPageState extends State<CallPage> {
     });
     _engine.muteLocalAudioStream(muted);
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -264,7 +246,7 @@ class _CallPageState extends State<CallPage> {
         child: Stack(
           children: <Widget>[
             _viewRows(),
-          
+            
             _toolbar(),
           ],
         ),
